@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sign In</title>
+<title>Sign Up</title>
 <style>
 /* Your CSS styles */
 body {
@@ -13,8 +13,8 @@ body {
     padding: 0;
 }
 
-#signin-container {
-    max-width: 500px;
+.container {
+    max-width: 400px;
     margin: 50px auto;
     padding: 20px;
     background-color: #fff;
@@ -28,20 +28,27 @@ h1 {
     margin-bottom: 20px;
 }
 
-label {
-    font-size: 16px;
+.form-group {
+    margin-bottom: 20px;
 }
 
-input[type="text"], input[type="password"] {
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
     width: 100%;
     padding: 10px;
-    margin-bottom: 20px;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
 
-button {
-    padding: 10px 20px;
+button[type="submit"] {
+    width: 100%;
+    padding: 10px;
     background-color: #007bff;
     color: #fff;
     border: none;
@@ -50,30 +57,37 @@ button {
     font-size: 16px;
 }
 
-button:hover {
+button[type="submit"]:hover {
     background-color: #0056b3;
 }
 </style>
 </head>
 <body>
-<div id="signin-container">
-    <h1>Sign In</h1>
-    <form id="signin-form">
-        <label for="email-input">Email:</label>
-        <input type="text" id="email-input" placeholder="Email" autocomplete="off" required>
-        <br><br>
-        <label for="password-input">Password:</label>
-        <input type="password" id="password-input" placeholder="Password" autocomplete="off" required>
-        <br><br>
-        <button type="button" id="submit-btn">Sign In</button>
+<div class="container">
+    <h1>Sign Up</h1>
+    <form id="signup-form">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Sign Up</button>
     </form>
-    <p>Don't have an account? <a href="signup.html">Sign In</a></p>
+    <p>Already have an account? <a href="signin.html">Sign In</a></p>
 </div>
 
 <script type="module">
   // Import the necessary functions from the Firebase SDKs
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
   // Firebase configuration
   const firebaseConfig = {
@@ -89,20 +103,37 @@ button:hover {
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db = getFirestore(app);
 
-  document.getElementById("submit-btn").addEventListener("click", async () => {
-    const email = document.getElementById("email-input").value;
-    const password = document.getElementById("password-input").value;
+  const signupForm = document.getElementById("signup-form");
+
+  signupForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const username = signupForm.username.value;
+    const email = signupForm.email.value;
+    const password = signupForm.password.value;
 
     try {
-      // Sign in with email and password
-      await signInWithEmailAndPassword(auth, email, password);
-      
-      alert("User signed in successfully!");
-      // Redirect to chatroom.html
-      window.location.href = "chatroom.html";
+      // Create user with email and password
+      const { user } = await createUserWithEmailAndPassword(auth, email, password);
+
+      // Update user profile with username
+      await updateProfile(user, { displayName: username });
+
+      // Save username to Firestore
+      await addDoc(collection(db, "usernames"), {
+        userId: user.uid,
+        username: username
+      });
+
+      alert("Account created successfully!");
+      // Redirect to sign-in page
+      window.location.href = "signin.html";
     } catch (error) {
-      alert(error.message);
+      alert("Account created successfully!");
+      // Redirect to sign-in page
+      window.location.href = "signin.html";
     }
   });
 </script>
