@@ -90,10 +90,6 @@ h1 {
     cursor: pointer;
     font-size: 16px;
 }
-
-#delete-account-btn:hover {
-    background-color: #c82333;
-}
 </style>
 </head>
 <body>
@@ -111,9 +107,6 @@ h1 {
         <button id="change-username-btn">Change Username</button>
     </div>
     <!-- Add the "Delete Account" button -->
-    <div id="delete-account-container">
-        <button id="delete-account-btn">Delete Account</button>
-    </div>
 </div>
 
 <script type="module">
@@ -215,27 +208,6 @@ h1 {
         }
       } catch (error) {
         console.error("Error changing username:", error);
-      }
-    }
-  });
-
-  // Add event listener for "Delete Account" button
-  document.getElementById("delete-account-btn").addEventListener("click", async () => {
-    if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-      try {
-        if (currentUser) {
-          // Delete user's Firestore document
-          await deleteDoc(doc(db, "usernames", currentUser.uid));
-
-          // Delete user's account
-          await deleteUser(auth.currentUser);
-          alert("Your account has been deleted successfully.");
-          window.location.href = "signup.html"
-        } else {
-          console.error("No user signed in.");
-        }
-      } catch (error) {
-        console.error("Error deleting account:", error);
       }
     }
   });
