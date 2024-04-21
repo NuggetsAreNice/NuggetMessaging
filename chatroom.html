@@ -66,30 +66,6 @@ h1 {
 #send-btn:hover {
     background-color: #0056b3;
 }
-
-#change-username-btn {
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-#change-username-btn:hover {
-    background-color: #218838;
-}
-
-#delete-account-btn {
-    padding: 10px 20px;
-    background-color: #dc3545;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
 </style>
 </head>
 <body>
@@ -101,10 +77,6 @@ h1 {
     <div id="input-area">
         <input type="text" id="message-input" placeholder="Type your message..." autocomplete="off">
         <input type="submit" value="Send" id="send-btn">
-    </div>
-    <!-- Add the "Change Username" button -->
-    <div id="change-username-container">
-        <button id="change-username-btn">Change Username</button>
     </div>
     <!-- Add the "Delete Account" button -->
 </div>
@@ -187,28 +159,6 @@ h1 {
       }
     } catch (error) {
       console.error("Error adding message: ", error);
-    }
-  });
-
-  // Add event listener for "Change Username" button
-  document.getElementById("change-username-btn").addEventListener("click", async () => {
-    const newUsername = prompt("Enter your new username:");
-    if (newUsername !== null && newUsername.trim() !== "") {
-      try {
-        if (currentUser) {
-          // Update the username
-          await currentUser.updateProfile({
-            displayName: newUsername
-          });
-          // Update the username in Firestore
-          await loadUsername(currentUser.uid);
-          alert("Username changed successfully!");
-        } else {
-          console.error("No user signed in.");
-        }
-      } catch (error) {
-        console.error("Error changing username:", error);
-      }
     }
   });
 </script>
