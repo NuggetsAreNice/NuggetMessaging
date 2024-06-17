@@ -121,6 +121,7 @@ button[type="submit"]:hover {
     const username = usernameInput.value;
     const email = signupForm.email.value;
     const password = signupForm.password.value;
+    alert(email);
 
     // Check if username is already taken
     const usernameExists = await checkUsernameExists(username);
