@@ -60,6 +60,11 @@ button[type="submit"] {
 button[type="submit"]:hover {
     background-color: #0056b3;
 }
+
+.error-message {
+    color: red;
+    font-size: 14px;
+}
 </style>
 </head>
 <body>
@@ -79,6 +84,7 @@ button[type="submit"]:hover {
             <input type="password" id="password" name="password" required>
         </div>
         <button type="submit">Sign Up</button>
+        <p class="error-message" id="username-error"></p> <!-- Display error message here -->
     </form>
     <p>Already have an account? <a href="index.html">Sign In</a></p>
 </div>
@@ -86,8 +92,8 @@ button[type="submit"]:hover {
 <script type="module">
   // Import the necessary functions from the Firebase SDKs
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import { getFirestore, collection, getDocs, where, query } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
   // Firebase configuration
   const firebaseConfig = {
@@ -106,13 +112,24 @@ button[type="submit"]:hover {
   const db = getFirestore(app);
 
   const signupForm = document.getElementById("signup-form");
+  const usernameInput = document.getElementById("username");
+  const usernameError = document.getElementById("username-error");
 
   signupForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const username = signupForm.username.value;
+    const username = usernameInput.value;
     const email = signupForm.email.value;
     const password = signupForm.password.value;
+
+    // Check if username is already taken
+    const usernameExists = await checkUsernameExists(username);
+    if (usernameExists) {
+      usernameError.textContent = "Username already taken. Please choose another.";
+      return;
+    } else {
+      usernameError.textContent = ""; // Clear any previous error message
+    }
 
     try {
       // Create user with email and password
@@ -131,11 +148,16 @@ button[type="submit"]:hover {
       // Redirect to sign-in page
       window.location.href = "index.html";
     } catch (error) {
-      alert("Account created successfully!");
-      // Redirect to sign-in page
-      window.location.href = "index.html";
+      console.error("Error signing up:", error.message);
+      alert(error.message);
     }
   });
+
+  async function checkUsernameExists(username) {
+    const userQuery = query(collection(db, "usernames"), where("username", "==", username));
+    const querySnapshot = await getDocs(userQuery);
+    return !querySnapshot.empty;
+  }
 </script>
 </body>
 </html>
