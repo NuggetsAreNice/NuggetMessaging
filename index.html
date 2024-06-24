@@ -1,124 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="google-adsense-account" content="ca-pub-8178267696562969">
-<title>Sign In</title>
-<style>
-/* Your CSS styles */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-}
-
-#signin-container {
-    max-width: 500px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-    font-size: 24px;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-label {
-    font-size: 16px;
-}
-
-input[type="text"], input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemical Equation Solver</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .result {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-<div id="signin-container">
-    <h1>Sign In</h1>
-    <form id="signin-form">
-        <label for="email-input">Email:</label>
-        <input type="text" id="email-input" placeholder="Email" autocomplete="off" required>
-        <br><br>
-        <label for="password-input">Password:</label>
-        <input type="password" id="password-input" placeholder="Password" autocomplete="off" required>
-        <br><br>
-        <button type="button" id="submit-btn">Sign In</button>
-    </form>
-    <p>Don't have an account? <a href="signup.html">Sign up</a></p>
-</div>
+    <div class="container">
+        <h1>Chemical Equation Solver</h1>
+        <p>Enter the reactants of the chemical equation (e.g., H2 + O2):</p>
+        <input type="text" id="equationInput" placeholder="Enter reactants, e.g., H2 + O2">
+        <button onclick="generateProducts()">Generate Products</button>
+        <div class="result" id="result"></div>
+    </div>
+    <script>
+        async function generateProducts() {
+            const input = document.getElementById('equationInput').value;
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = "<p>Loading...</p>";
 
-<script type="module">
-  // Import the necessary functions from the Firebase SDKs
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+            try {
+                const reactants = input.split('+').map(compound => compound.trim());
+                const products = await fetchProducts(reactants);
 
-  // Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyAW2PdNo9Ovq58XMH8f4GxWyeToBeqkokM",
-    authDomain: "database-88dbf.firebaseapp.com",
-    projectId: "database-88dbf",
-    storageBucket: "database-88dbf.appspot.com",
-    messagingSenderId: "376149256202",
-    appId: "1:376149256202:web:54f0c628fe64ef5fe817f3",
-    measurementId: "G-BW9YXL56YM"
-  };
+                if (products && products.length > 0) {
+                    const equation = `${input} = ${products.join(' + ')}`;
+                    resultDiv.innerHTML = `<p>Generated Products: ${equation}</p>`;
+                } else {
+                    resultDiv.innerHTML = `<p>No reactions found for the given reactants.</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p>Error processing the input. Please ensure it is correctly formatted.</p>`;
+            }
+        }
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+        async function fetchProducts(reactants) {
+            try {
+                const baseUrl = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name";
+                const reactantPromises = reactants.map(reactant => fetch(`${baseUrl}/${reactant}/synonyms/JSON`).then(response => response.json()));
 
-  document.getElementById("submit-btn").addEventListener("click", async () => {
-    const email = document.getElementById("email-input").value;
-    const password = document.getElementById("password-input").value;
+                const reactantData = await Promise.all(reactantPromises);
+                const reactantIds = reactantData.map(data => data.InformationList.Information[0].CID);
 
-    try {
-      // Sign in with email and password
-      await signInWithEmailAndPassword(auth, email, password);
-      
-      alert("User signed in successfully!");
-      // Redirect to chatroom.html
-      window.location.href = "chatroom.html";
-    } catch (error) {
-      alert(error.message);
-    }
-  });
-</script>
-<div style="text-align: center; margin-top: 20px;">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8178267696562969" crossorigin="anonymous"></script>
-<!-- Sign in ad -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-8178267696562969"
-     data-ad-slot="2653904606"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-</div>
+                const reactionUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${reactantIds.join(',')}/reaction/JSON`;
+                const reactionResponse = await fetch(reactionUrl);
+                const reactionData = await reactionResponse.json();
+
+                const reactions = reactionData.ReactionInfoList.ReactionInfo;
+                if (reactions && reactions.length > 0) {
+                    const products = reactions[0].Products.map(product => product.Name);
+                    return products;
+                } else {
+                    return null;
+                }
+            } catch (error) {
+                console.error("Error fetching products:", error);
+                return null;
+            }
+        }
+    </script>
 </body>
 </html>
