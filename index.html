@@ -3,107 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chemical Equation Solver</title>
+    <title>Learn Arduino</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
         }
-        .container {
-            max-width: 600px;
-            margin: auto;
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
         }
-        input[type="text"] {
-            width: 100%;
+        header nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        header nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+        header nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+        main {
+            padding: 20px;
+        }
+        section {
+            margin-bottom: 40px;
+        }
+        h2 {
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+        }
+        .tutorial {
+            background-color: #fff;
             padding: 10px;
-            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         button {
-            padding: 10px 20px;
-            font-size: 16px;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
         }
-        .result {
-            margin-top: 20px;
+        button:hover {
+            background-color: #555;
+        }
+        pre.code {
+            background-color: #272822;
+            color: #f8f8f2;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .hidden {
+            display: none;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Chemical Equation Solver</h1>
-        <p>Enter the reactants of the chemical equation (e.g., H2 + O2):</p>
-        <input type="text" id="equationInput" placeholder="Enter reactants, e.g., H2 + O2">
-        <button onclick="generateProducts()">Generate Products</button>
-        <div class="result" id="result"></div>
-    </div>
+    <header>
+        <h1>Learn Arduino</h1>
+        <nav>
+            <ul>
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#tutorials">Tutorials</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#resources">Resources</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="introduction">
+            <h2>Introduction</h2>
+            <p>Welcome to the Arduino tutorial website. Here you will learn how to use Arduino to create amazing projects.</p>
+        </section>
+
+        <section id="tutorials">
+            <h2>Tutorials</h2>
+            <div class="tutorial">
+                <h3>Blink LED</h3>
+                <p>Learn how to blink an LED using Arduino.</p>
+                <button onclick="toggleCode('blinkCode')">Show Code</button>
+                <pre id="blinkCode" class="code hidden">
+/*
+  Blink
+  Turns an LED on for one second, then off for one second, repeatedly.
+*/
+
+void setup() {
+  // initialize digital pin LED_BUILTIN as an output.
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+// the loop function runs over and over again forever
+void loop() {
+  digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(1000);                       // wait for a second
+  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+  delay(1000);                       // wait for a second
+}
+                </pre>
+            </div>
+        </section>
+
+        <section id="projects">
+            <h2>Projects</h2>
+            <p>Check out some cool projects you can create with Arduino.</p>
+        </section>
+
+        <section id="resources">
+            <h2>Resources</h2>
+            <p>Find useful resources to help you learn more about Arduino.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Learn Arduino. All rights reserved.</p>
+    </footer>
+
     <script>
-        async function generateProducts() {
-            const input = document.getElementById('equationInput').value;
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = "<p>Loading...</p>";
-
-            try {
-                const reactants = input.split('+').map(compound => compound.trim());
-                const products = await fetchProducts(reactants);
-
-                if (products && products.length > 0) {
-                    const equation = `${input} = ${products.join(' + ')}`;
-                    resultDiv.innerHTML = `<p>Generated Products: ${equation}</p>`;
-                } else {
-                    resultDiv.innerHTML = `<p>No reactions found for the given reactants.</p>`;
-                }
-            } catch (error) {
-                resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
-            }
-        }
-
-        async function fetchProducts(reactants) {
-            try {
-                const baseUrl = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name";
-                const reactantPromises = reactants.map(reactant =>
-                    fetch(`${baseUrl}/${reactant}/cids/JSON`).then(response => {
-                        if (!response.ok) {
-                            throw new Error(`Error fetching CID for ${reactant}`);
-                        }
-                        return response.json();
-                    })
-                );
-
-                const reactantData = await Promise.all(reactantPromises);
-                const reactantIds = reactantData.map(data => {
-                    if (data.IdentifierList && data.IdentifierList.CID) {
-                        return data.IdentifierList.CID[0];
-                    } else {
-                        throw new Error(`Reactant not found in PubChem: ${JSON.stringify(data)}`);
-                    }
-                });
-
-                const reactionUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${reactantIds.join(',')}/JSON?heading=Reactions`;
-                const reactionResponse = await fetch(reactionUrl);
-                if (!reactionResponse.ok) {
-                    throw new Error("Error fetching reaction data");
-                }
-                const reactionData = await reactionResponse.json();
-
-                if (reactionData && reactionData.Record && reactionData.Record.Section) {
-                    const reactionsSection = reactionData.Record.Section.find(section => section.TOCHeading === "Reactions");
-                    if (reactionsSection && reactionsSection.Section) {
-                        const products = [];
-                        reactionsSection.Section.forEach(subsection => {
-                            if (subsection.Information) {
-                                subsection.Information.forEach(info => {
-                                    if (info.Value && info.Value.StringWithMarkup) {
-                                        products.push(...info.Value.StringWithMarkup.map(item => item.String));
-                                    }
-                                });
-                            }
-                        });
-                        return products;
-                    }
-                }
-                return null;
-            } catch (error) {
-                console.error("Error fetching products:", error);
-                throw new Error("Error fetching products. Please ensure the reactants are valid.");
+        function toggleCode(id) {
+            const codeBlock = document.getElementById(id);
+            if (codeBlock.classList.contains('hidden')) {
+                codeBlock.classList.remove('hidden');
+            } else {
+                codeBlock.classList.add('hidden');
             }
         }
     </script>
