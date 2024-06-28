@@ -59,10 +59,18 @@
         async function fetchProducts(reactants) {
             try {
                 const baseUrl = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name";
-                const reactantPromises = reactants.map(reactant => fetch(`${baseUrl}/${reactant}/synonyms/JSON`).then(response => response.json()));
+                const reactantPromises = reactants.map(reactant =>
+                    fetch(`${baseUrl}/${reactant}/cids/JSON`).then(response => response.json())
+                );
 
                 const reactantData = await Promise.all(reactantPromises);
-                const reactantIds = reactantData.map(data => data.InformationList.Information[0].CID);
+                const reactantIds = reactantData.map(data => {
+                    if (data.IdentifierList && data.IdentifierList.CID) {
+                        return data.IdentifierList.CID[0];
+                    } else {
+                        throw new Error(`Reactant not found: ${data}`);
+                    }
+                });
 
                 const reactionUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${reactantIds.join(',')}/reaction/JSON`;
                 const reactionResponse = await fetch(reactionUrl);
