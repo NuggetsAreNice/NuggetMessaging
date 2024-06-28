@@ -60,7 +60,12 @@
             try {
                 const baseUrl = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name";
                 const reactantPromises = reactants.map(reactant =>
-                    fetch(`${baseUrl}/${reactant}/cids/JSON`).then(response => response.json())
+                    fetch(`${baseUrl}/${reactant}/cids/JSON`).then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Error fetching CID for ${reactant}`);
+                        }
+                        return response.json();
+                    })
                 );
 
                 const reactantData = await Promise.all(reactantPromises);
@@ -68,21 +73,34 @@
                     if (data.IdentifierList && data.IdentifierList.CID) {
                         return data.IdentifierList.CID[0];
                     } else {
-                        throw new Error(`Reactant not found: ${JSON.stringify(data)}`);
+                        throw new Error(`Reactant not found in PubChem: ${JSON.stringify(data)}`);
                     }
                 });
 
-                const reactionUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${reactantIds.join(',')}/reaction/JSON`;
+                const reactionUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${reactantIds.join(',')}/JSON?heading=Reactions`;
                 const reactionResponse = await fetch(reactionUrl);
+                if (!reactionResponse.ok) {
+                    throw new Error("Error fetching reaction data");
+                }
                 const reactionData = await reactionResponse.json();
 
-                const reactions = reactionData.ReactionInfoList.ReactionInfo;
-                if (reactions && reactions.length > 0) {
-                    const products = reactions[0].Products.map(product => product.Name);
-                    return products;
-                } else {
-                    return null;
+                if (reactionData && reactionData.Record && reactionData.Record.Section) {
+                    const reactionsSection = reactionData.Record.Section.find(section => section.TOCHeading === "Reactions");
+                    if (reactionsSection && reactionsSection.Section) {
+                        const products = [];
+                        reactionsSection.Section.forEach(subsection => {
+                            if (subsection.Information) {
+                                subsection.Information.forEach(info => {
+                                    if (info.Value && info.Value.StringWithMarkup) {
+                                        products.push(...info.Value.StringWithMarkup.map(item => item.String));
+                                    }
+                                });
+                            }
+                        });
+                        return products;
+                    }
                 }
+                return null;
             } catch (error) {
                 console.error("Error fetching products:", error);
                 throw new Error("Error fetching products. Please ensure the reactants are valid.");
