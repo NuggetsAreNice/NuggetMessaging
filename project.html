@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Learn Arduino</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="introduction.html">Introduction</a></li>
+                <li><a href="tutorials.html">Tutorials</a></li>
+                <li><a href="resources.html">Resources</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Projects</h2>
+            <div class="tutorial">
+                <h3>Temperature Monitor</h3>
+                <p>Learn how to create a temperature monitor using Arduino.</p>
+                <button onclick="toggleCode('tempCode')">Show Code</button>
+                <pre id="tempCode" class="code hidden">
+#include <LiquidCrystal.h>
+
+const int tempPin = A0; // Analog pin for temperature sensor
+const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2; // Pins for LCD
+
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+void setup() {
+  lcd.begin(16, 2);
+  lcd.print("Temp: ");
+}
+
+void loop() {
+  int tempReading = analogRead(tempPin);
+  float voltage = tempReading * 5.0;
+  voltage /= 1024.0;
+  float temperatureC = (voltage - 0.5) * 100;
+  lcd.setCursor(6, 0);
+  lcd.print(temperatureC);
+  lcd.print(" C");
+  delay(1000);
+}
+                </pre>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Learn Arduino. All rights reserved.</p>
+    </footer>
+    <script>
+        function toggleCode(id) {
+            const codeBlock = document.getElementById(id);
+            if (codeBlock.classList.contains('hidden')) {
+                codeBlock.classList.remove('hidden');
+            } else {
+                codeBlock.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
