@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorials</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Learn Arduino</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="introduction.html">Introduction</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="resources.html">Resources</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Tutorials</h2>
+            <div class="tutorial">
+                <h3>Blink LED</h3>
+                <p>Learn how to blink an LED using Arduino.</p>
+                <button onclick="toggleCode('blinkCode')">Show Code</button>
+                <pre id="blinkCode" class="code hidden">
+/*
+  Blink
+  Turns an LED on for one second, then off for one second, repeatedly.
+*/
+
+void setup() {
+  // initialize digital pin LED_BUILTIN as an output.
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+// the loop function runs over and over again forever
+void loop() {
+  digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(1000);                       // wait for a second
+  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+  delay(1000);                       // wait for a second
+}
+                </pre>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Learn Arduino. All rights reserved.</p>
+    </footer>
+    <script>
+        function toggleCode(id) {
+            const codeBlock = document.getElementById(id);
+            if (codeBlock.classList.contains('hidden')) {
+                codeBlock.classList.remove('hidden');
+            } else {
+                codeBlock.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
