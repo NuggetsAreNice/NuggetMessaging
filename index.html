@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-adsense-account" content="ca-pub-8178267696562969">
     <title>Learn Arduino</title>
     <style>
         body {
@@ -40,33 +39,6 @@
             border-bottom: 2px solid #333;
             padding-bottom: 5px;
         }
-        .tutorial {
-            background-color: #fff;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        button {
-            margin-top: 10px;
-            padding: 10px 15px;
-            background-color: #333;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #555;
-        }
-        pre.code {
-            background-color: #272822;
-            color: #f8f8f2;
-            padding: 10px;
-            border-radius: 5px;
-            overflow-x: auto;
-        }
-        .hidden {
-            display: none;
-        }
         footer {
             background-color: #333;
             color: #fff;
@@ -83,72 +55,22 @@
         <h1>Learn Arduino</h1>
         <nav>
             <ul>
-                <li><a href="#introduction">Introduction</a></li>
-                <li><a href="#tutorials">Tutorials</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#resources">Resources</a></li>
+                <li><a href="introduction.html">Introduction</a></li>
+                <li><a href="tutorials.html">Tutorials</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="resources.html">Resources</a></li>
+                <li><a href="admin.html">Admin</a></li>
             </ul>
         </nav>
     </header>
-
     <main>
-        <section id="introduction">
-            <h2>Introduction</h2>
-            <p>Welcome to the Arduino tutorial website. Here you will learn how to use Arduino to create amazing projects.</p>
-        </section>
-
-        <section id="tutorials">
-            <h2>Tutorials</h2>
-            <div class="tutorial">
-                <h3>Blink LED</h3>
-                <p>Learn how to blink an LED using Arduino.</p>
-                <button onclick="toggleCode('blinkCode')">Show Code</button>
-                <pre id="blinkCode" class="code hidden">
-/*
-  Blink
-  Turns an LED on for one second, then off for one second, repeatedly.
-*/
-
-void setup() {
-  // initialize digital pin LED_BUILTIN as an output.
-  pinMode(LED_BUILTIN, OUTPUT);
-}
-
-// the loop function runs over and over again forever
-void loop() {
-  digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(1000);                       // wait for a second
-  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);                       // wait for a second
-}
-                </pre>
-            </div>
-        </section>
-
-        <section id="projects">
-            <h2>Projects</h2>
-            <p>Check out some cool projects you can create with Arduino.</p>
-        </section>
-
-        <section id="resources">
-            <h2>Resources</h2>
-            <p>Find useful resources to help you learn more about Arduino.</p>
+        <section>
+            <h2>Welcome to Learn Arduino</h2>
+            <p>This website is designed to help you learn how to use Arduino to create amazing projects. Use the menu to navigate to different sections.</p>
         </section>
     </main>
-
     <footer>
         <p>&copy; 2024 Learn Arduino. All rights reserved.</p>
     </footer>
-
-    <script>
-        function toggleCode(id) {
-            const codeBlock = document.getElementById(id);
-            if (codeBlock.classList.contains('hidden')) {
-                codeBlock.classList.remove('hidden');
-            } else {
-                codeBlock.classList.add('hidden');
-            }
-        }
-    </script>
 </body>
 </html>
